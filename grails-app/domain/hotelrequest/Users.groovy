@@ -3,6 +3,7 @@ package hotelrequest
 class Users {
 
     static constraints = {
+		email(email:true, blank:false)
     }
 	
 	int userId
