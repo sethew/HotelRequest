@@ -1,11 +1,12 @@
 package hotelrequest
 
-class Users {
+class User {
 
-    static constraints = {
+	static constraints = {
 		email(email:true, blank:false)
-    }
-	
+		nullable:true
+	}
+
 	int userId
 	String firstName
 	String lastName
@@ -16,7 +17,7 @@ class Users {
 	String postalCode
 	String country
 	String email
-	String passwdHash	
+	String passwdHash
 	int customerClass
 	boolean current
 }
