@@ -1,8 +1,11 @@
+<!DOCTYPE HTML>
 <html>
-<h3>Created Users</h3>
-<ul>
-<g:each in="${users}" var="user">
-<li>${user.email}</li>
-</g:each>
-</ul>
+<title>Welcome to HotelRequest</title>
+<h3>Welcome to HotelRequest</h3>
+<h4>Sign Up</h4>
+<form id="signup" action="user/save">
+<label for="email">Email address</label> 
+<input id="email" name="email" placeholder="example@domain.com" type="email">
+<button type="submit">Register</button>
+</form>
 </html>
