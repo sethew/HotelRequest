@@ -1,28 +1,28 @@
 package hotelrequest
 
+import groovy.util.slurpersupport.NodeChild
 import groovyx.net.http.ContentType
-import groovyx.net.http.HttpResponseDecorator
-import groovyx.net.http.RESTClient
 import spock.lang.Specification
 
 class UserSpec extends Specification {
 
 	def "User page shows created users"() {
 		setup:
-		def httpClient = new RESTClient("http://localhost:8080/")
 		def userEmails = ["joe@sethlab.com", "wilma@sethlab.com", "magenta@sethlab.com"]
 		userEmails.each {
-			httpClient.get(path: "/HotelRequest/user/save", query:[email:it])
+			URLConnection saveConnection = new URL("http://localhost:8080/HotelRequest/user/save?email=${it}").openConnection()	
+			assert saveConnection.responseCode == 200;
 		}
 
 		when:
-		HttpResponseDecorator response = (HttpResponseDecorator) new RESTClient("http://localhost:8080/").get(path:"/HotelRequest/user/")
+		URLConnection response = new URL("http://localhost:8080/HotelRequest/user").openConnection()
+		NodeChild html = new XmlSlurper().parseText(response.content.text)
 
 		then:
-		response.status == 200
-		response.contentType == ContentType.HTML.toString()
-		response.data.BODY.H3.text() == 'Created Users'
-		response.data.BODY.UL.eachWithIndex() { email, i ->
+		response.responseCode == 200
+		response.contentType == "${ContentType.HTML.toString()};charset=UTF-8"
+		html.h3.text() == 'Created Users'
+		html.ul.eachWithIndex() { email, i ->
 			email == userEmails[i]
 		}
 	}
