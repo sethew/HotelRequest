@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class HeartbeatSpec extends Specification {
 
-	def "Application heartbeat shows app is alive."() {
+	def heartbeatShowsAppIsAlive() {
 		when:
 		def response = new RESTClient("http://localhost:8080").get(path: "/HotelRequest/heartbeat")
 
