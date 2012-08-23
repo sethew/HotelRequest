@@ -14,7 +14,7 @@ import spock.lang.Specification
 class UserSpec extends Specification {
 	def demographicParms = "&firstName=Seth&lastName=Sweep&addr1=1234+Morgan&addr2=Apt+33&city=GOLDEN+VALLEY&state=MN&postalCode=55444&country=USA&phone=555-555-5555"
 	
-	@Ignore
+	
 	def userAdminPageShowsCreatedUsers() {
 	
 		
@@ -49,7 +49,7 @@ class UserSpec extends Specification {
 	}
 	
 	
-	@Ignore
+	
 	def attendeeCannotCreateUserIfEmailAlreadyUsed() {
 		setup:
 		def httpClient = new DefaultHttpClient()
@@ -70,7 +70,7 @@ class UserSpec extends Specification {
 		text == "Email fifi@example.com is already registered."
 	}
 	
-	@Ignore
+	
 	def attendeeCannotCreateUserIfEmailAddressIsInvalid() {
 		setup:
 		def httpClient = new DefaultHttpClient()
