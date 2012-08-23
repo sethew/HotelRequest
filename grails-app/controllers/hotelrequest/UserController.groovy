@@ -8,13 +8,14 @@ class UserController {
 	}
 
 	def save() {
-		def user = new User(userId:1, addr1:"", addr2:"", city:"", email:params.email, country:"", firstName:"", lastName:"", passwdHash:"", postalCode:"", state:"")
+		def user = new User( addr1:params.addr1, addr2:params.addr2, city:params.city, email:params.email, country:params.country, firstName:params.firstName, lastName:params.lastName, passwdHash:"", phone:params.phone, postalCode:params.postalCode, state:params.state)
 		if (!user.save()) {
 			if(user.errors.hasFieldErrors("email")) {
 				render(text:message(error:user.errors.getFieldError()), status:400)
 			}
 			else {
-				render(text:"Unable to create user.", status:400)
+				
+				render(text:"Unable to create user." + message(error:user.errors.getFieldError()), status:400)
 			}
 		}
 		else {

@@ -13,7 +13,7 @@ import org.junit.*
 class UserTests {
 
 	void testUser() {
-		def usersTest = new User(userId:1,addr1: "123 Apple Street",addr2:"Apt 123",city:"Minneapolis",email:"jdoe@jd.com", country:"USA", firstName: "John",lastName:"Doe", passwdHash:"xxxx",postalCode: "55555", state: "MN")
+		def usersTest = new User(addr1: "123 Apple Street",addr2:"Apt 123",city:"Minneapolis",email:"jdoe@jd.com", country:"USA", firstName: "John",lastName:"Doe", passwdHash:"xxxx",postalCode: "55555", state: "MN", phone:"555-555-5555")
 
 		if( !usersTest.save(flush:true,insert:true, validate:true) ) {
 			usersTest.errors.each { println it }
