@@ -8,7 +8,6 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.BasicHttpContext
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class UserSpec extends Specification {
@@ -49,7 +48,6 @@ class UserSpec extends Specification {
 	}
 	
 	
-	
 	def attendeeCannotCreateUserIfEmailAlreadyUsed() {
 		setup:
 		def httpClient = new DefaultHttpClient()
@@ -67,9 +65,8 @@ class UserSpec extends Specification {
 		then:
 		httpResponse.statusLine.statusCode == 400
 		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
-		text == "Email fifi@example.com is already registered."
+		text == "Email fifi@example.com is already registered"
 	}
-	
 	
 	def attendeeCannotCreateUserIfEmailAddressIsInvalid() {
 		setup:
