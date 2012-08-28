@@ -19,8 +19,9 @@ class UserController {
 			}
 		}
 		else {
-			render "Created user: ${user.email}"
 			session.user = user
+			render "Created user: ${session.user.email}"
+			
 		}
 	}
 	
