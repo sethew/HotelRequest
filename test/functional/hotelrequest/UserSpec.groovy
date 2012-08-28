@@ -48,6 +48,15 @@ class UserSpec extends Specification {
 		urlConnection.content.text == "Created user: seth@example.com"
 	}
 	
+	def attendeeCanUpdateUser() {
+		when:
+		URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/update?id=1&email=seth@example2.com${demographicParms}").openConnection()
+		
+		then:
+		urlConnection.responseCode == 200
+		
+	}
+	
 	def attendeeCanLoginWithEmail() {
 		when: URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/handleLogin?email=seth@example.com").openConnection()
 		
