@@ -20,8 +20,29 @@ class UserController {
 		}
 		else {
 			render "Created user: ${user.email}"
+			session.user = user
 		}
 	}
+	
+	def login() {
+		render(view: "login")
+	}
+	
+	def handleLogin() {
+		User user = User.findByEmail(params.email)
+			log.error(user)
+		if(user == null || !user) {
+			render(text:"Unable to find user." + params.email, status:400)
+		} else {
+			session.user = user
+			render(view: "whoami")
+		}
+	}
+	
+	def whoami() {
+		render(view: "whoami")
+	}
+	
 
 	def index() {
 	}
