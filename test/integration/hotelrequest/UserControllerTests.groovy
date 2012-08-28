@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse
 class UserControllerTests extends GroovyTestCase {
 
 	Map mockParams
-	
+
 	void setUp() {
 		mockParams = [:]
 		mockParams.lastName = "Joe"
@@ -25,6 +25,7 @@ class UserControllerTests extends GroovyTestCase {
 
 	void tearDown() {
 		// Tear down logic here
+		//user.delete()
 	}
 
 	void testSave() {	
@@ -35,7 +36,7 @@ class UserControllerTests extends GroovyTestCase {
 		assert controller.response.status == HttpServletResponse.SC_OK
 		assert User.count == 1
 	}
-
+	
 	void testSaveWithErrorInvalidEmail() {
 		def controller = new UserController()
 		mockParams.email = "notanemail"
@@ -144,5 +145,17 @@ class UserControllerTests extends GroovyTestCase {
 		assert controller.response.text == "phone cannot be blank"
 		assert controller.response.status == 400
 		assert User.count == 0
+	}
+	
+	void testLogin() {
+		def controller = new UserController()
+	    controller.params.putAll(mockParams)
+		controller.save()
+		controller.handleLogin()
+		
+		assert controller.session
+		def sessUser = controller.session.user
+		assert sessUser
+		assertEquals("Expected emails to match",controller.params.email, sessUser.email)
 	}
 }

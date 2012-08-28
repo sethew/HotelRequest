@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.http.protocol.BasicHttpContext
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class UserSpec extends Specification {
@@ -47,6 +48,15 @@ class UserSpec extends Specification {
 		urlConnection.content.text == "Created user: seth@example.com"
 	}
 	
+	@Ignore("no view named whoami")
+	def attendeeCanLoginWithEmail() {
+		when: URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/handleLogin?email=seth@example.com").openConnection()
+		
+		then:
+		urlConnection.responseCode == 200
+		urlConnection.contentType== "${ContentType.HTML.toString()};charset=utf-8"
+		urlConnection.content.text == "logged in with: seth@example.com"
+	}
 	
 	def attendeeCannotCreateUserIfEmailAlreadyUsed() {
 		setup:
