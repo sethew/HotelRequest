@@ -48,7 +48,7 @@ class UserControllerTests {
 		
 		def sessUser = controller.session.user
 		assert sessUser
-		assertEquals("Expected ids to match",user.id, sessUser.id)
+		assertEquals("Expected ids to match",user.email, sessUser.user.email)
 		
 		user.delete()
 	}

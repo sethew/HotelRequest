@@ -48,6 +48,14 @@ class UserSpec extends Specification {
 		urlConnection.content.text == "Created user: seth@example.com"
 	}
 	
+	def attendeeCanLoginWithEmail() {
+		when: URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/handleLogin?email=seth@example.com").openConnection()
+		
+		then:
+		urlConnection.responseCode == 200
+		urlConnection.contentType== "${ContentType.HTML.toString()};charset=utf-8"
+		urlConnection.content.text == "logged in with: seth@example.com"
+	}
 	
 	
 	def attendeeCannotCreateUserIfEmailAlreadyUsed() {
@@ -67,7 +75,7 @@ class UserSpec extends Specification {
 		then:
 		httpResponse.statusLine.statusCode == 400
 		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
-		text == "Email fifi@example.com is already registered."
+		text == "Email fifi@example.com is already registered"
 	}
 	
 	
