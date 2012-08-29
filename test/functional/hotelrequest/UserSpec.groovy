@@ -16,8 +16,6 @@ class UserSpec extends Specification {
 	
 	
 	def userAdminPageShowsCreatedUsers() {
-	
-		
 		setup:
 		def userEmails = ["joe@example.com", "wilma@example.com", "magenta@example.com"]
 		userEmails.each {
@@ -48,19 +46,15 @@ class UserSpec extends Specification {
 		urlConnection.content.text == "Created user: seth@example.com"
 	}
 	
-
+	@Ignore("user needs to be created before he can be updated")
 	def attendeeCanUpdateUser() {
 		when:
 		URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/update?id=1&email=seth@example2.com${demographicParms}").openConnection()
 		
 		then:
 		urlConnection.responseCode == 200
-		
 	}
 	
-
-	@Ignore("no view named whoami")
-
 	def attendeeCanLoginWithEmail() {
 		when: URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/handleLogin?email=seth@example.com").openConnection()
 		
