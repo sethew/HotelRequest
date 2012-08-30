@@ -25,11 +25,12 @@ class UserController {
 	}
 	
 	def update() {
-		if(params.id != session.user.id){
+		if(params.id == session.user.id.toString()){
 			// Update Okay, ID matches session value, the next two lines are a slick way of updating the 
 			// an object from the params
 			def user = User.findById(params.id)
 			user.properties = params
+			
 			if (!user.save()) {
 				render(view: "edit", model: [userInstance: user], status:400) 
 			} else {
