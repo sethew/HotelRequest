@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair
 import org.apache.http.protocol.BasicHttpContext
 import org.apache.http.protocol.HttpContext
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class UserSpec extends Specification {
@@ -22,6 +23,8 @@ class UserSpec extends Specification {
 	
 	HttpClient httpClient 
 	HttpContext httpContext 
+	
+	static int userCounter = 0
 	
 	def setup() {
 		httpClient = new DefaultHttpClient()
@@ -150,6 +153,48 @@ class UserSpec extends Specification {
 		httpResponse.statusLine.statusCode == 200
 	}
 	
+	def attendeeCanLoginSecurely() {
+		setup:
+		def email = "connie${userCounter++}@example.edu"
+		createNewUserWithEmail(email)
+		
+		when:
+		HttpResponse httpResponse = httpClient.execute(createPostForSecureLogin(email))
+		
+		then:
+		httpResponse.statusLine.statusCode == 302
+		httpResponse.getFirstHeader("Location").value == "http://localhost:8080/HotelRequest/"		
+	}
+	
+	@Ignore("this test is somehow not working. However, there will be more things to test once the login functionality is married to the spring session.")
+	def attendeeCanLogout() {
+		setup:
+		def email = "connie${userCounter++}@example.edu"
+		createNewUserWithEmail(email)
+		
+		HttpPost post = createPostForSecureLogin(email)
+		HttpResponse loginhttpResponse = httpClient.execute(post)
+		loginhttpResponse.entity.consumeContent()
+		
+		when:
+		HttpGet httpGet = new HttpGet("http://localhost:8080/HotelRequest/j_spring_security_logout")
+		HttpResponse httpResponse = httpClient.execute(httpGet)
+		
+		then: 
+		httpResponse.statusLine.statusCode == 302
+		httpResponse.getFirstHeader("Location").value == "http://localhost:8080/HotelRequest/"
+    }
+
+	private HttpPost createPostForSecureLogin(String email) {
+		HttpPost post = new HttpPost("http://localhost:8080/HotelRequest/j_spring_security_check")
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>()
+		["j_password":"badsandwich","j_username":email].each{String key, String value ->
+			nameValuePairs << new BasicNameValuePair(key, value)
+		}
+		post.setEntity(new UrlEncodedFormEntity(nameValuePairs))
+		return post
+	}
+	
 	private HttpPost createSavePostForUserWithEmail(String email) {
 		HttpPost post = new HttpPost("http://localhost:8080/HotelRequest/user/save")
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>()
@@ -179,14 +224,5 @@ class UserSpec extends Specification {
 		url << ["http://localhost:8080/HotelRequest/user/save?email=seth4@example.com", "http://localhost:8080/HotelRequest/user/update?email=tom2@example.com"]
 	}
 	
-//	def attendeeCanLogin() {
-//		setup:
-//		createNewUserWithEmail
-//		
-//		when:
-//		
-//		
-//		then:
-//		
-//	}
+
 }
