@@ -167,6 +167,18 @@ class UserSpec extends Specification {
 		response.entity.consumeContent()
 	}
 	
+	//This would make a better unit test, but there's a grails bug that prevents this. See http://jira.grails.org/browse/GRAILS-8426
+	def attendeeCanOnlyCallSaveOrUpdateAsAPost() {
+		when:
+		HttpResponse httpResponse = httpClient.execute(new HttpGet(url), httpContext)
+		
+		then:
+		httpResponse.statusLine.statusCode == 405
+		
+		where:
+		url << ["http://localhost:8080/HotelRequest/user/save?email=seth4@example.com", "http://localhost:8080/HotelRequest/user/update?email=tom2@example.com"]
+	}
+	
 //	def attendeeCanLogin() {
 //		setup:
 //		createNewUserWithEmail

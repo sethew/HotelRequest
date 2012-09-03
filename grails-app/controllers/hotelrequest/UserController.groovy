@@ -3,6 +3,8 @@ package hotelrequest
 class UserController {
 	static scaffold = false
 
+	static allowedMethods = [save:'POST', update:'POST']
+	
 	def admin() {
 		[users : User.list()]
 	}

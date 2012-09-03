@@ -5,23 +5,12 @@ import grails.test.mixin.support.*
 
 import javax.servlet.http.HttpServletResponse
 
-class UserControllerTests extends GroovyTestCase {
+class UserControllerIntegTests extends GroovyTestCase {
 
 	Map mockParams
 
 	void setUp() {
-		mockParams = [:]
-		mockParams.lastName = "Joe"
-		mockParams.firstName = "Face"
-		mockParams.addr1 = "123 Fake St"
-		mockParams.addr2 = "Apt 1"
-		mockParams.city = "Vancouver"
-		mockParams.state = "BC"
-		mockParams.postalCode = "ABC123"
-		mockParams.country = "Canada"
-		mockParams.email = "seth@example.com"
-		mockParams.phone = "123456789"
-		mockParams.password = "password"
+		mockParams = ["lastName":"Joe", "firstName":"Face", "addr1":"123 Fake St", "addr2":"Apt 1", "city":"Vancouver", "state":"BC", "postalCode":"ABC123", country:"Canada", email:"seth@example.com", phone:"123456789", password:"password"]
 	}
 
 	void tearDown() {
@@ -169,4 +158,5 @@ class UserControllerTests extends GroovyTestCase {
 		assert sessUser
 		assertEquals("Expected emails to match",controller.params.email, sessUser.email)
 	}
+
 }
