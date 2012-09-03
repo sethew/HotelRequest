@@ -62,11 +62,11 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
-		grails.serverURL = "http://localhost:8080"
+		grails.serverURL = "http://localhost:8080/HotelRequest"
     }
     production {
         grails.logging.jul.usebridge = false
-        grails.serverURL = "http://localhost:8080"
+        grails.serverURL = "http://localhost:8080/HotelRequest"
     }
 }
 
@@ -90,3 +90,9 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+// Added by the Spring Security Core plugin:
+grails.plugins.springsecurity.userLookup.userDomainClassName = 'hotelrequest.SecUser'
+grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'hotelrequest.SecUserSecRole'
+grails.plugins.springsecurity.authority.className = 'hotelrequest.SecRole'
+grails.plugins.springsecurity.userLookup.usernamePropertyName = 'email'

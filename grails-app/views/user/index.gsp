@@ -5,8 +5,8 @@
 <h4>Sign Up</h4>
 <form id="signup" action="save">
 <ul>
-<li><label for="email">Email address</label> 
-<input id="email" name="email" placeholder="example@domain.com" type="email"></li>
+<li><label for="email">Email address</label><input id="email" name="email" placeholder="example@domain.com" type="email"></li>
+<li><label for="email">Password</label><input id="password" name="password" placeholder="misfittle99" type="password"></li>
 <li><label for="firstName">First Name</label><input id="firstName" name="firstName" placeholder="Connie" type="text">
 <li><label for="lastName">Last Name</label><input id="lastName" name="lastName" placeholder="Robot" type="text"></li>
 <li><label for="addr1">Address</label><input id="addr1" name="addr1" placeholder="123 Apple Street" type="text"></li>

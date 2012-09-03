@@ -1,9 +1,8 @@
 package hotelrequest
 
-class User {
+class User extends SecUser {
 
 	static constraints = {
-		email(email:true, blank:false, unique: true)
 		lastName(blank:false)
 		firstName(blank:false)
 		addr1(blank:false)
@@ -12,7 +11,6 @@ class User {
 		state(blank:false)
 		postalCode(blank:false)
 		country(blank:false)
-		email(blank:false)
 		phone(blank:false)
 		nullable:true
 	}
@@ -26,9 +24,7 @@ class User {
 	String state
 	String postalCode
 	String country
-	String email
 	String phone
-	String passwdHash
 	int customerClass
 	boolean current
 }

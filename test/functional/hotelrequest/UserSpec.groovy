@@ -4,31 +4,36 @@ import groovy.util.slurpersupport.NodeChild
 import groovyx.net.http.ContentType
 
 import org.apache.http.HttpResponse
+import org.apache.http.NameValuePair
+import org.apache.http.client.HttpClient
+import org.apache.http.client.entity.UrlEncodedFormEntity
 import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
 import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.message.BasicNameValuePair
 import org.apache.http.protocol.BasicHttpContext
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 class UserSpec extends Specification {
-	def demographicParms = "&firstName=Seth&lastName=Sweep&addr1=1234+Morgan&addr2=Apt+33&city=GOLDEN+VALLEY&state=MN&postalCode=55444&country=USA&phone=555-555-5555"
 	
+	Map formAttributes
+	
+	HttpClient httpClient 
+	HttpContext httpContext 
+	
+	def setup() {
+		httpClient = new DefaultHttpClient()
+		httpContext = new BasicHttpContext()
+		
+		formAttributes = ["id":"4", "email":"", "password":"badsandwich", "firstName":"Seth", "lastName":"Sweep", "addr1":"1234 Morgan","addr2":"Apt 33", "city":"Golden Valley","state":"MN","postalCode":"55444","country":"USA", "phone":"555-555-5555"]
+	}
 	
 	def userAdminPageShowsCreatedUsers() {
 		setup:
 		def userEmails = ["joe@example.com", "wilma@example.com", "magenta@example.com"]
-		userEmails.each {
-			URLConnection saveConnection = new URL("http://localhost:8080/HotelRequest/user/save?email=${it}${demographicParms}").openConnection()	
-			assert saveConnection.responseCode == 200;
-		}
+		userEmails.each { createNewUserWithEmail(it) }
 		
 		when:
 		URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/admin").openConnection()
@@ -43,91 +48,40 @@ class UserSpec extends Specification {
 		}
 	}
 	
-	
 	def attendeeCanUpdateUser() {
 		setup:
 		// Create user
-		HttpClient client = new DefaultHttpClient()
-		HttpPost post = new HttpPost("http://localhost:8080/HotelRequest/user/save")
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>()
-		
-		nameValuePairs.add(new BasicNameValuePair("email","seth2@example.com"))
-		nameValuePairs.add(new BasicNameValuePair("firstName","Seth"))
-		nameValuePairs.add(new BasicNameValuePair("lastName","Sweep"))
-		nameValuePairs.add(new BasicNameValuePair("addr1","1234 Morgan"))
-		nameValuePairs.add(new BasicNameValuePair("addr2","Apt 33"))
-		nameValuePairs.add(new BasicNameValuePair("city","Golden Valley"))
-		nameValuePairs.add(new BasicNameValuePair("state","MN"))
-		nameValuePairs.add(new BasicNameValuePair("postalCode","55444"))
-		nameValuePairs.add(new BasicNameValuePair("country","USA"))
-		nameValuePairs.add(new BasicNameValuePair("phone","555-555-5555"))
-		
-		post.setEntity(new UrlEncodedFormEntity(nameValuePairs))
-		HttpResponse response = client.execute(post)
-		response.getEntity().consumeContent()
+		def email = "seth2@example.com"
+		createNewUserWithEmail(email)
 	
 		when:
-		List<NameValuePair> nameValuePairsUpd = new ArrayList<NameValuePair>()
+        List<NameValuePair> nameValuePairsUpd = new ArrayList<NameValuePair>()
 		HttpPost postUpd = new HttpPost("http://localhost:8080/HotelRequest/user/update")
-		nameValuePairsUpd.add(new BasicNameValuePair("id","4"))
-		nameValuePairsUpd.add(new BasicNameValuePair("email","seth2@example.com"))
-		nameValuePairsUpd.add(new BasicNameValuePair("firstName","SethUPD"))
-		nameValuePairsUpd.add(new BasicNameValuePair("lastName","SweepUPD"))
-		nameValuePairsUpd.add(new BasicNameValuePair("addr1","1234 Morgan"))
-		nameValuePairsUpd.add(new BasicNameValuePair("addr2","Apt 33"))
-		nameValuePairsUpd.add(new BasicNameValuePair("city","Golden Valley"))
-		nameValuePairsUpd.add(new BasicNameValuePair("state","MN"))
-		nameValuePairsUpd.add(new BasicNameValuePair("postalCode","55444"))
-		nameValuePairsUpd.add(new BasicNameValuePair("country","USA"))
-		nameValuePairsUpd.add(new BasicNameValuePair("phone","555-555-5555"))
+		formAttributes.putAll(["id":"4", "firstName":"SethUPD", "lastName":"SweepUPD"])	
+		formAttributes.each{String key, String value ->
+			nameValuePairsUpd << new BasicNameValuePair(key, value)
+		}
 		postUpd.setEntity(new UrlEncodedFormEntity(nameValuePairsUpd))
-		HttpResponse responseUpd = client.execute(postUpd);
+		HttpResponse responseUpd = httpClient.execute(postUpd);
 		
 		then:
 		responseUpd.getStatusLine().getStatusCode() == 200
 		responseUpd.getEntity().consumeContent()
-		
 	}
-	
 	
 	def attendeeMessesUpUpdateUser() {
 		setup:
-		// Create user
-		HttpClient client = new DefaultHttpClient()
-		HttpPost post = new HttpPost("http://localhost:8080/HotelRequest/user/save")
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>()
-		
-		nameValuePairs.add(new BasicNameValuePair("email","seth3@example.com"))
-		nameValuePairs.add(new BasicNameValuePair("firstName","Seth"))
-		nameValuePairs.add(new BasicNameValuePair("lastName","Sweep"))
-		nameValuePairs.add(new BasicNameValuePair("addr1","1234 Morgan"))
-		nameValuePairs.add(new BasicNameValuePair("addr2","Apt 33"))
-		nameValuePairs.add(new BasicNameValuePair("city","Golden Valley"))
-		nameValuePairs.add(new BasicNameValuePair("state","MN"))
-		nameValuePairs.add(new BasicNameValuePair("postalCode","55444"))
-		nameValuePairs.add(new BasicNameValuePair("country","USA"))
-		nameValuePairs.add(new BasicNameValuePair("phone","555-555-5555"))
-		
-		post.setEntity(new UrlEncodedFormEntity(nameValuePairs))
-		HttpResponse response = client.execute(post)
-		response.getEntity().consumeContent()
+		createNewUserWithEmail("seth3@example.com")
 	
 		when:
 		List<NameValuePair> nameValuePairsUpd = new ArrayList<NameValuePair>()
 		HttpPost postUpd = new HttpPost("http://localhost:8080/HotelRequest/user/update")
-		nameValuePairsUpd.add(new BasicNameValuePair("id","5"))
-		nameValuePairsUpd.add(new BasicNameValuePair("email",""))
-		nameValuePairsUpd.add(new BasicNameValuePair("firstName","SethUPD"))
-		nameValuePairsUpd.add(new BasicNameValuePair("lastName","SweepUPD"))
-		nameValuePairsUpd.add(new BasicNameValuePair("addr1","1234 Morgan"))
-		nameValuePairsUpd.add(new BasicNameValuePair("addr2","Apt 33"))
-		nameValuePairsUpd.add(new BasicNameValuePair("city","Golden Valley"))
-		nameValuePairsUpd.add(new BasicNameValuePair("state","MN"))
-		nameValuePairsUpd.add(new BasicNameValuePair("postalCode","55444"))
-		nameValuePairsUpd.add(new BasicNameValuePair("country","USA"))
-		nameValuePairsUpd.add(new BasicNameValuePair("phone","555-555-5555"))
+		formAttributes.putAll(["id":"4", "email":"", "firstName":"SethUPD", "lastName":"SweepUPD"])	
+		formAttributes.each{String key, String value ->
+			nameValuePairsUpd << new BasicNameValuePair(key, value)
+		}
 		postUpd.setEntity(new UrlEncodedFormEntity(nameValuePairsUpd))
-		HttpResponse responseUpd = client.execute(postUpd);
+		HttpResponse responseUpd = httpClient.execute(postUpd);
 		
 		then:
 		responseUpd.getStatusLine().getStatusCode() == 400
@@ -136,59 +90,91 @@ class UserSpec extends Specification {
 	}
 	
 	def attendeeCanCreateUser() {
-		when: 
-		URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/save?email=seth@example.com${demographicParms}").openConnection()
+		setup:
+		def email = "seth@example.com"
+		
+		when:
+		HttpResponse httpResponse = httpClient.execute(createSavePostForUserWithEmail(email))
 		
 		then:
-		urlConnection.responseCode == 200
-		urlConnection.contentType== "${ContentType.HTML.toString()};charset=utf-8"
-		urlConnection.content.text == "Created user: seth@example.com"
-	}
-	
-
-	
-	def attendeeCanLoginWithEmail() {
-		when: URLConnection urlConnection = new URL("http://localhost:8080/HotelRequest/user/handleLogin?email=seth@example.com").openConnection()
-		
-		then:
-		urlConnection.responseCode == 200
-		urlConnection.contentType== "${ContentType.HTML.toString()};charset=utf-8"
-		urlConnection.content.text == "logged in with: seth@example.com"
+		httpResponse.statusLine.statusCode == 200
+		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
+		httpResponse.entity.content.text == "Created user: ${email}"
 	}
 	
 	def attendeeCannotCreateUserIfEmailAlreadyUsed() {
 		setup:
-		def httpClient = new DefaultHttpClient()
-     	def httpContext = new BasicHttpContext()
-		
-		def url = "http://localhost:8080/HotelRequest/user/save?email=fifi@example.com${demographicParms}"
-		URLConnection saveConnection = new URL(url).openConnection()
-		assert saveConnection.responseCode == 200
+		def email = "tom@example.com"
+		createNewUserWithEmail(email) 
 		
 		when:
-		HttpGet httpGet = new HttpGet(url)
-		HttpResponse httpResponse = httpClient.execute(httpGet, httpContext)
-		def text = httpResponse.entity.content.text
-		
+		HttpResponse httpResponse = httpClient.execute(createSavePostForUserWithEmail(email))
+
 		then:
 		httpResponse.statusLine.statusCode == 400
 		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
-		text == "Email fifi@example.com is already registered"
+		httpResponse.entity.content.text == "Email ${email} is already registered"
 	}
 	
 	def attendeeCannotCreateUserIfEmailAddressIsInvalid() {
-		setup:
-		def httpClient = new DefaultHttpClient()
-		def httpContext = new BasicHttpContext()
-		
 		when:
-		HttpGet httpGet = new HttpGet("http://localhost:8080/HotelRequest/user/save?email=sethatexampledotcom${demographicParms}")
-		HttpResponse httpResponse = httpClient.execute(httpGet, httpContext)
-		def text = httpResponse.entity.content.text
+		HttpResponse httpResponse = httpClient.execute(createSavePostForUserWithEmail("sethatexampledotcom"))
 		
 		then:
 		httpResponse.statusLine.statusCode == 400
 		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
-		text == 'sethatexampledotcom is not a valid email address'
+		httpResponse.entity.content.text == 'sethatexampledotcom is not a valid email address'
 	}
+	
+	def attendeeCanLoginWithEmail() {
+		setup:
+		createNewUserWithEmail("seth4@example.com")
+		
+		when:
+		HttpResponse httpResponse = httpClient.execute(new HttpGet("http://localhost:8080/HotelRequest/user/handleLogin?email=seth4@example.com"), httpContext)
+		
+		then:
+		httpResponse.statusLine.statusCode == 200
+		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
+		httpResponse.entity.content.text == "logged in with: seth4@example.com"
+	}
+
+	def attendeeCanAccessLoginPage() {
+		setup:
+		createNewUserWithEmail("fifi2@example.com")
+			
+		when:
+		HttpResponse httpResponse = httpClient.execute(new HttpGet("http://localhost:8080/HotelRequest/login/auth"), httpContext)
+				
+		then:
+		httpResponse.statusLine.statusCode == 200
+	}
+	
+	private HttpPost createSavePostForUserWithEmail(String email) {
+		HttpPost post = new HttpPost("http://localhost:8080/HotelRequest/user/save")
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>()
+		formAttributes.email = email
+		formAttributes.each{String key, String value ->
+			nameValuePairs << new BasicNameValuePair(key, value)
+		}
+		post.setEntity(new UrlEncodedFormEntity(nameValuePairs))
+		return post
+	}
+		
+	private createNewUserWithEmail(String email) {
+		HttpResponse response = httpClient.execute(createSavePostForUserWithEmail(email))
+		assert response.statusLine.statusCode == 200
+		response.entity.consumeContent()
+	}
+	
+//	def attendeeCanLogin() {
+//		setup:
+//		createNewUserWithEmail
+//		
+//		when:
+//		
+//		
+//		then:
+//		
+//	}
 }

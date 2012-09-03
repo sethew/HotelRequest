@@ -2,6 +2,7 @@ package hotelrequest
 
 
 
+import grails.plugins.springsecurity.SpringSecurityService
 import grails.test.mixin.*
 
 import org.junit.*
@@ -13,13 +14,19 @@ import org.junit.*
 class UserTests {
 
 	void testUser() {
-		def usersTest = new User(addr1: "123 Apple Street",addr2:"Apt 123",city:"Minneapolis",email:"jdoe@jd.com", country:"USA", firstName: "John",lastName:"Doe", passwdHash:"xxxx",postalCode: "55555", state: "MN", phone:"555-555-5555")
-
+		def userPassword = "password"
+		
+		def mockSpringSecurityServiceControl = mockFor(SpringSecurityService)
+		mockSpringSecurityServiceControl.demand.encodePassword {String password -> assert password == userPassword }
+		
+		def usersTest = new User(addr1: "123 Apple Street",addr2:"Apt 123",city:"Minneapolis",email:"jdoe@jd.com", country:"USA", firstName: "John",lastName:"Doe" ,postalCode: "55555", state: "MN", phone:"555-555-5555", password:userPassword)
+		usersTest.springSecurityService = mockSpringSecurityServiceControl.createMock()
+		
 		if( !usersTest.save(flush:true,insert:true, validate:true) ) {
 			usersTest.errors.each { println it }
 		}
-		println User.list()
 
 		assertEquals 1, User.list().size()
+		mockSpringSecurityServiceControl.verify()
 	}
 }

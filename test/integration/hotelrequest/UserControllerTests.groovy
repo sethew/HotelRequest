@@ -21,6 +21,7 @@ class UserControllerTests extends GroovyTestCase {
 		mockParams.country = "Canada"
 		mockParams.email = "seth@example.com"
 		mockParams.phone = "123456789"
+		mockParams.password = "password"
 	}
 
 	void tearDown() {
@@ -143,6 +144,16 @@ class UserControllerTests extends GroovyTestCase {
 		controller.params.putAll(mockParams)
 		controller.save()
 		assert controller.response.text == "phone cannot be blank"
+		assert controller.response.status == 400
+		assert User.count == 0
+	}
+	
+	void testSaveWithErrorBlankPassword() {
+		def controller = new UserController()
+		mockParams.password = ""
+		controller.params.putAll(mockParams)
+		controller.save()
+		assert controller.response.text == "password cannot be blank"
 		assert controller.response.status == 400
 		assert User.count == 0
 	}
