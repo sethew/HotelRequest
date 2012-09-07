@@ -6,7 +6,7 @@ class User extends SecUser {
 		lastName(blank:false)
 		firstName(blank:false)
 		addr1(blank:false)
-		addr2(blank:false)
+		addr2(blank:true)
 		city(blank:false)
 		state(blank:false)
 		postalCode(blank:false)
