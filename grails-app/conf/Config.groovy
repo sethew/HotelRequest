@@ -96,3 +96,16 @@ grails.plugins.springsecurity.userLookup.userDomainClassName = 'hotelrequest.Sec
 grails.plugins.springsecurity.userLookup.authorityJoinClassName = 'hotelrequest.SecUserSecRole'
 grails.plugins.springsecurity.authority.className = 'hotelrequest.SecRole'
 grails.plugins.springsecurity.userLookup.usernamePropertyName = 'email'
+
+grails {
+	mail {
+	  host = "smtp.gmail.com"
+	  port = 465
+	  username = "hotelrequest@convention-reg.com"
+	  password = "hot1hot1"
+	  props = ["mail.smtp.auth":"true",
+					   "mail.smtp.socketFactory.port":"465",
+					   "mail.smtp.socketFactory.class":"javax.net.ssl.SSLSocketFactory",
+					   "mail.smtp.socketFactory.fallback":"false"]
+	}
+}
