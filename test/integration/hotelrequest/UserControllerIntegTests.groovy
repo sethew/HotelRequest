@@ -10,7 +10,7 @@ class UserControllerIntegTests extends GroovyTestCase {
 	Map mockParams
 
 	void setUp() {
-		mockParams = ["lastName":"Joe", "firstName":"Face", "addr1":"123 Fake St", "addr2":"Apt 1", "city":"Vancouver", "state":"BC", "postalCode":"ABC123", country:"Canada", email:"seth@example.com", phone:"123456789", password:"password"]
+		mockParams = ["lastName":"Joe", "firstName":"Face", "addr1":"123 Fake St", "addr2":"Apt 1", "city":"Vancouver", "state":"BC", "postalCode":"ABC123", country:"Canada", email:"seth@convention-reg.com", phone:"123456789", password:"password"]
 	}
 
 	void tearDown() {
@@ -20,11 +20,16 @@ class UserControllerIntegTests extends GroovyTestCase {
 
 	void testSave() {	
 		def controller = new UserController()
+		def sendMailCalled = false
+		controller.metaClass.sendMail = { Closure c -> 
+			sendMailCalled = true
+		}
 		controller.params.putAll(mockParams)
 		controller.save()
-		assert controller.response.text == "Created user: seth@example.com"
+		assert controller.response.text == "Created user: seth@convention-reg.com"
 		assert controller.response.status == HttpServletResponse.SC_OK
 		assert User.count == 1
+		assert sendMailCalled
 	}
 	
 	void testSaveWithErrorInvalidEmail() {
@@ -77,14 +82,19 @@ class UserControllerIntegTests extends GroovyTestCase {
 		assert User.count == 0
 	}
 	
-	void testSaveWithErrorBlankAddr2() {
+	void testSaveWithNotErrorBlankAddr2() {
 		def controller = new UserController()
+		def sendMailCalled = false
+		controller.metaClass.sendMail = { Closure c ->
+			sendMailCalled = true
+		}
 		mockParams.addr2 = ""
 		controller.params.putAll(mockParams)
 		controller.save()
-		assert controller.response.text == "addr2 cannot be blank"
-		assert controller.response.status == 400
-		assert User.count == 0
+		assert controller.response.text == "Created user: seth@convention-reg.com"
+		assert controller.response.status == HttpServletResponse.SC_OK
+		assert User.count == 1
+		assert sendMailCalled
 	}
 	
 	void testSaveWithErrorBlankCity() {
@@ -149,6 +159,10 @@ class UserControllerIntegTests extends GroovyTestCase {
 	
 	void testLogin() {
 		def controller = new UserController()
+		def sendMailCalled = false
+		controller.metaClass.sendMail = { Closure c ->
+			sendMailCalled = true
+		}
 	    controller.params.putAll(mockParams)
 		controller.save()
 		controller.handleLogin()
@@ -157,6 +171,7 @@ class UserControllerIntegTests extends GroovyTestCase {
 		def sessUser = controller.session.user
 		assert sessUser
 		assertEquals("Expected emails to match",controller.params.email, sessUser.email)
+		assert sendMailCalled
 	}
 
 }

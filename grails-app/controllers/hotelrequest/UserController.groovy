@@ -23,6 +23,13 @@ class UserController {
 			session.user = user
 			render "Created user: ${session.user.email}"
 			
+			sendMail {
+				to user.email
+				subject "Welcome to the Hotel Request System"
+				html g.render(template:"/emailTemplates/userVerification", model: [user: user])
+		  }
+
+			
 		}
 	}
 	

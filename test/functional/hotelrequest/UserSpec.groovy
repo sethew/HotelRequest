@@ -94,7 +94,7 @@ class UserSpec extends Specification {
 	
 	def attendeeCanCreateUser() {
 		setup:
-		def email = "seth@example.com"
+		def email = "seth@convention-reg.com"
 		
 		when:
 		HttpResponse httpResponse = httpClient.execute(createSavePostForUserWithEmail(email))
