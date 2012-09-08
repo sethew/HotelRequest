@@ -8,7 +8,7 @@ class Property {
 	
 	String event
 	String name
-	String Desc
+	String desc
 	Boolean isAvalible
 	String imageURL
 	
