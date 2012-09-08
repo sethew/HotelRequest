@@ -2,6 +2,7 @@ package hotelrequest
 
 class Property {
 
+	static hasMany = [roomType:RoomType]
     static constraints = {
     }
 	
@@ -9,5 +10,6 @@ class Property {
 	String name
 	String Desc
 	Boolean isAvalible
+	String imageURL
 	
 }
