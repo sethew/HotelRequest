@@ -1,50 +1,31 @@
 package hotelrequest
 
-import groovy.util.slurpersupport.NodeChild
-import groovyx.net.http.ContentType
+import geb.spock.GebReportingSpec
+import spock.lang.*
+import hotelrequest.gebpages.PropertyListPage
 
-import org.apache.http.HttpResponse
-import org.apache.http.NameValuePair
-import org.apache.http.client.HttpClient
-import org.apache.http.client.entity.UrlEncodedFormEntity
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.message.BasicNameValuePair
-import org.apache.http.protocol.BasicHttpContext
-import org.apache.http.protocol.HttpContext
+@Stepwise
+class PropertySpec extends GebReportingSpec {
+	
 
-import spock.lang.Ignore
-import spock.lang.Specification
-
-class PropertySpec extends Specification {
 	
-	Map formAttributes
-	
-	HttpClient httpClient 
-	HttpContext httpContext 
-	
-	static int userCounter = 0
-	
-	def setup() {
-		httpClient = new DefaultHttpClient()
-		httpContext = new BasicHttpContext()
-		
-		
+	def "pageLoads"() {
+		when: "I am at the propertyList page"
+		to PropertyListPage
+		then:
+		$().text().contains("Place Holder for some event description text")
 	}
 	
-	
-	
-	def attendeeCanBrowsePropertiesAndRooms() {
-		when:
-		HttpResponse httpResponse = httpClient.execute(new HttpGet("http://localhost:8080/HotelRequest/property/listFancy"), httpContext)
-		
+	def "pageContainsTwoProperties"() {
+		when: "I am at the propertyList page"
+		to PropertyListPage
 		then:
-		httpResponse.statusLine.statusCode == 200
-		httpResponse.entity.contentType.value == "${ContentType.HTML.toString()};charset=utf-8"
-		httpResponse.entity.
-		
-		}
+		$().text().contains("DoubleTree By Hilton")
+		$().text().contains("Secondary Hotel for CONvergence")
+	}
+	
+
+	
 	
 
 }

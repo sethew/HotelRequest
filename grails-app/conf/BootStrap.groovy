@@ -1,14 +1,22 @@
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import hotelrequest.Property
 import hotelrequest.RoomType
+import hotelrequest.RoomRequestToken
+import hotelrequest.User;
+import grails.util.Environment
 
 class BootStrap {
 	
 	// Refactor target.  An XML loader would be better though prod data is very light
     def init = { servletContext ->
+		
+
+		
 			if (!Property.count()) {
-				def southRoomsKing = new RoomType(roomLimit:3, title: "South (Short) Tower King Rooms",
+				def southRoomsKing = new RoomType(roomLimit:1, title: "South (Short) Tower King Rooms",
 					desc: "King Rooms in the South (Short) tower", isWaitList: false, price: 101,
 					imageURL: "dbl_bloomington_king_north.png")
 				def southRoomsDouble = new RoomType(roomLimit:3, title: "South (Short) Tower Double Rooms",
@@ -32,14 +40,15 @@ class BootStrap {
 					.addToRoomType(northRoomsKing)
 					.addToRoomType(northRoomsDouble)
 					.addToRoomType(waitlistRoomDbl)
-				//	dblTree.save()
-				if(!dblTree.save())
+
+				if(!dblTree.save()) {
 					log.error("Error bootstraping hotel" + dblTree.errors.getFieldError())
 				}
 					
 				
 				
-				
+
+			
 				def SofRoomsDouble = new RoomType(roomLimit:4, title: "Sofitel Double Rooms",
 					desc: "Double Rooms in the Hotel Sofitel", isWaitList: false, price: 121.0)
 				def SofRoomsKing = new RoomType(roomLimit:4, title: "Sofitel King Rooms",
@@ -52,12 +61,38 @@ class BootStrap {
 					isAvalible: true,imageURL: "sofitel_bloomington_small.png")
 					.addToRoomType(SofRoomsKing)
 					.addToRoomType(SofRoomsDouble)
-					.addToRoomType(waitlistRoomSof)
-				
+					.addToRoomType(waitlistRoomSof)	
+					
 				if(!sofitel.save()) {
 					log.error("Error bootstraping hotel" + sofitel.errors.getFieldError())
 				}
+			}
+			
+			
+			// The following should only run for test.
+			
+			if (Environment.current == Environment.TEST) {
+				println "Test environment"
+			
+			
+			def defaultUser = new User(addr1: "123 Apple Street",addr2:"Apt 123",city:"Minneapolis",
+				email:"jdoe@jd.com", country:"USA", firstName: "John",lastName:"Doe" ,postalCode: "55555",
+				 state: "MN", phone:"555-555-5555", password: "foo")
+				if(!defaultUser.save()) {
+						log.error("Error bootstraping hotel" + defaultUser.errors.getFieldError())
+				}
+			
+			Date now = new Date()
+			def southRoomsKingRequest = new RoomRequestToken(roomType: southRoomsKing,
+				entryTimestamp: now, user: defaultUser, isActive: true)
+			
+			if(!southRoomsKingRequest.save()) {
+				log.error("Error bootstraping hotel" + southRoomsKingRequest.errors.getFieldError())
+			}
+			}
+
     }
+
     def destroy = {
     }
 }

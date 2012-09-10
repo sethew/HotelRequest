@@ -17,4 +17,5 @@ class Request {
 	String additionalRequests
 	Boolean volunteer
 	Calendar timestamp
+	RoomType roomType
 }
