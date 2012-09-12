@@ -26,7 +26,20 @@ class UserControllerUnitTests {
 	void testSaveSetsSessionUser() {
 		request.method = "POST"
 		controller.params.putAll(mockParams)
+		def sendMailCalled = false
+		
+		controller.metaClass.sendMail = { Closure c ->
+		
+		sendMailCalled = true
+		
+		}
+		
+	
+		
+		
+		
 		controller.save()
+		assert sendMailCalled
 		assert session.user != null
 		assert session.user.email == mockParams.email
 	}
