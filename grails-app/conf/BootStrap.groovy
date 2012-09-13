@@ -1,18 +1,15 @@
-import java.util.Calendar;
-import java.util.Date;
-import java.util.logging.Logger;
-
-import hotelrequest.Property
-import hotelrequest.RoomType
-import hotelrequest.RoomRequestToken
-import hotelrequest.User;
 import grails.util.Environment
+import hotelrequest.Property
+import hotelrequest.RoomRequestToken
+import hotelrequest.RoomType
+import hotelrequest.User
 
 class BootStrap {
 	
 	// Refactor target.  An XML loader would be better though prod data is very light
     def init = { servletContext ->
 		
+
 
 		
 			if (!Property.count()) {
@@ -83,7 +80,7 @@ class BootStrap {
 				}
 			
 			Date now = new Date()
-			def southRoomsKingRequest = new RoomRequestToken(roomType: southRoomsKing,
+			def southRoomsKingRequest = new RoomRequestToken(roomType: RoomType.findByTitle("South (Short) Tower King Rooms"),
 				entryTimestamp: now, user: defaultUser, isActive: true)
 			
 			if(!southRoomsKingRequest.save()) {
